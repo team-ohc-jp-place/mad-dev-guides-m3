@@ -1,6 +1,6 @@
 name: mad-dev-guides-m3
 title: Module 3 - Enable CI/CD Pipeline and GitOps
-version: main
+version: main-JP
 nav:
   - modules/ROOT/nav.adoc
 start_page: ROOT:1-introduction.adoc
