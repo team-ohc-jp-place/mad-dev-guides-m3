@@ -8,7 +8,7 @@ site:
 content:
   sources:
     - url: .
-      branches: HEAD
+      branches: main-jp
       start_path: documentation
 
 asciidoc:
