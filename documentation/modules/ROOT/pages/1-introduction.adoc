@@ -1,4 +1,4 @@
-= 1. Introduction - 10 minutes
+= 1. はじめに - 10 minutes
 :imagesdir: ../assets/images
 
 [NOTE]
