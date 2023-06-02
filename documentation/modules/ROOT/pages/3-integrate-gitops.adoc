@@ -1,38 +1,38 @@
-= 3. Integrate OpenShift GitOps - 20 minutes
+= 3. OpenShift GitOpsとの統合- 20分
 :imagesdir: ../assets/images
 
-== Goals of this lab
+== 本演習の目標
 
-The goal is to build and deploy the modernized customer application to OpenShift using link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.11/html-single/cicd/index#about-redhat-openshift-gitops_understanding-openshift-gitops[OpenShift GitOps (ArgoCD)^].
+本演習では、　link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.11/html-single/cicd/index#about-redhat-openshift-gitops_understanding-openshift-gitops[OpenShift GitOps (ArgoCD)^]　を使って、モダナイゼーションされたお客様アプリケーションをOpenShiftに構築し、デプロイすることが目標です。
 
-* Update the configuration for the *gateway* service to now point to the modernized *customers* service.
-* Demonstrate that your *frontend* service still works as before.
+* モダナイゼーションされた *customers* サービスを指すように、 *gateway* サービスの構成を更新
+* *frontend* のサービスが以前と同じように動作可能か確認
 
-== 3.1. Sync the Gateway application in ArgoCD
+== 3.1. ArgoCDでGatewayアプリケーションを同期
 
-=== 3.1.1 Why OpenShift GitOps?
+=== 3.1.1 OpenShift GitOpsを使用する理由
 
-`GitOps` in short is a set of practices to use *Git pull requests* to manage infrastructure and application configurations. A Git repository in GitOps is considered the only source of truth and contains the entire state of the system so that the trail of changes to the system state are visible and auditable.
+`GitOps` を端的に説明すると、 *Git pull requests* を使ってインフラストラクチャやアプリケーションの設定を管理するための一連のプラクティスです。GitOpsにおけるGitリポジトリは、信頼できる唯一の情報源とみなされ、システムの状態全体を含むため、システムの状態に対する変更の痕跡を可視化し、監査可能です。
 
-Traceability of changes in GitOps is no novelty in itself as this approach is almost universally employed for the application source code. However GitOps advocates applying the same principles (`reviews`, `pull requests`, `tagging`, etc) to infrastructure and application configuration so that teams can benefit from the same assurance as they do for the application source code.
+GitOpsにおける変更のトレーサビリティは、アプリケーションのソースコードに対して広く採用されているため、それ自体は特に目新しいものではありません。しかし、GitOpsは、同じ原則（`レビュー`、`プルリクエスト`、`タグ付け` など）をインフラストラクチャやアプリケーションの設定に適用し、チームがアプリケーションのソースコードと同じ保証から恩恵を受けられるようにすることを提唱しています。
 
-Although there is no precise definition or agreed upon set of rules, the following principles are an approximation of what constitutes a GitOps practice:
+正確な定義や合意された一連のルールはありませんが、以下の原則がGitOpsの実践を構成するものと類似しています。
 
-* Declarative description of the system is stored in Git (configs, monitoring, etc)
-* Changes to the state are made via pull requests
-* Git push reconciled with the state of the running system with the state in the Git repository
+* システムに対する宣言的な記述はGitに保存される（設定、モニタリングなど）
+* システムの状態変更はプルリクエストで行う
+* Git Pushで稼働中のシステムの状態とGitリポジトリの状態を照合する
 
-=== 3.1.2 Update the Gateway Configuration
+=== 3.1.2 ゲートウェイ設定の更新
 
-Before you update the `Gateway` configuration, take a look at the current link:https://console-openshift-console.%SUBDOMAIN%/k8s/ns/retail-%USERID%/configmaps/gateway-config[application.yaml^] data of the `gateway-config` ConfigMap.
+`ゲートウェイ` 設定を更新する前に、現在の link:https://console-openshift-console.%SUBDOMAIN%/k8s/ns/retail-%USERID%/configmaps/gateway-config[application.yaml^] ファイル内の、 `gateway-config ConfigMap` の設定値を確認します。
 
 image::gateway-config.png[gateway-config]
 
-Go back to the link:https://argocd-server-retail-%USERID%.%SUBDOMAIN%/applications/applications?view=tree&resource=&node=argoproj.io%2FApplication%2Fretail-%USERID%%2Fapplications%2F0&tab=parameters[APP DETAILS^] in the ArgoCD admin console. Click on `EDIT`.
+ArgoCDの管理コンソールのlink:https://argocd-server-retail-%USERID%.%SUBDOMAIN%/applications/applications?view=tree&resource=&node=argoproj.io%2FApplication%2Fretail-%USERID%%2Fapplications%2F0&tab=parameters[APP DETAILS^] に戻り、`EDIT` をクリックしてください。
 
 image::gateway-config-argo.png[gateway-config-argo]
 
-Replace `customersHost` with the following value.
+`customersHost` を以下の値に置き換えてください。
 
 [.console-input]
 [source,yaml]
@@ -40,38 +40,39 @@ Replace `customersHost` with the following value.
 customersHost: customers
 ----
 
-Then, click `Save` and close the popup window by clicking `X` on the right top.
+設定値を変更後、 `Save` をクリックし、右上の `X` をクリックしてポップアップウィンドウを閉じます。
 
-Now you will see the `OutOfSync` status of the `gateway` application because you just only updated the ArgoCD's application parameter that is different than link:https://console-openshift-console.%SUBDOMAIN%/k8s/ns/retail-%USERID%/configmaps/gateway-config[gateway-config ConfigMap^] in the retail-%USERID% project.
+`gateway` アプリケーションの `OutOfSync` ステータスが表示されますが、これはArgoCDのアプリケーションパラメータが、「retail-%USERID%」プロジェクトの link:https://console-openshift-console.%SUBDOMAIN%/k8s/ns/retail-%USERID%/configmaps/gateway-config[gateway-config ConfigMap^] の設定値と異なるものを更新したためです。
 
 image::argocd-gateway-outofsync.png[argocd-gateway-outofsync]
 
-Click on `SYNC`. Then, click on `SYNCHRONIZE` on the left popup window.
+`SYNC` をクリックし、その後、左のポップアップウィンドウで `SYNCHRONIZE` をクリックしてください。
 
 image::argocd-gateway-sync.png[argocd-gateway-sync]
 
-The application should be synced in a second.
+同期実行後、アプリケーションはすぐに同期されます。
 
 image::argocd-gateway-synced.png[argocd-gateway-synced]
 
-Go back to the OpenShift admin console to confirm if the `gateway-config` is updated based on the code change.
+同期処理後、OpenShiftの管理コンソールに戻り、コード変更に基づき、 `gateway-config` が更新されているかどうかを確認します。
 
 image::gateway-new-configmap.png[gateway-new-configmap]
 
-== 3.2. Revisit the GLOBEX web page
+== 3.2. GLOBEXのwebページを再訪問
 
 Let's go back to the `Customers` in the link:https://ordersfrontend-retail-%USERID%.%SUBDOMAIN%[GLOBEX web page^].
+link:https://ordersfrontend-retail-%USERID%.%SUBDOMAIN%[GLOBEX webページ^] にある `Customers` に戻ってください。
 
 image::frontend.png[Frontend]
 
-[NOTE]
+[注]
 ====
-You might see `Unknown` result for customers data since the customers application can't access the database on OpenShift Virtualization with an error - `java.sql.SQLSyntaxErrorException: ORA-00942: table or view does not exist`. In that case, restart the `customers pod` by deleting the pod in OpenShift admin console.
+「Customers」アプリケーションが OpenShift Virtualization 上のデータベースにアクセスできず、「- `java.sql.SQLSyntaxErrorException: ORA-00942: table or view does not exist.` エラーのため、「Customers」データに対して 「Unknown result」が表示される可能性がありますが、その場合は、OpenShiftの管理コンソールでpodを削除して、 `customers pod` を再起動してください。
 ====
 
-== Summary
+== まとめ
 
-You have now successfully deployed the new *customers* application by integrating OpenShift Pipeline and GitOps for the continuous delivery automation. You'll learn Learn how to extend an application using API management and implement an event driven architecture in `module 4 and 5`.
+以上で、OpenShift PipelineとGitOpsを統合して、継続的デリバリーの自動化を行うことで、「New Customers」アプリケーションのデプロイに成功しました。`モジュール4` と `モジュール6` では、API管理を利用したアプリケーションの拡張方法と、イベント駆動型アーキテクチャの実装について学習します。
 
 == Additional Resources
 
