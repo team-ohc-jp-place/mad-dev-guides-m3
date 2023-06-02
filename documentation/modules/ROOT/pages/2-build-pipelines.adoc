@@ -1,160 +1,162 @@
-= 2. Build CI/CD Pipelines - 30 minutes
+= 2. CI/CDパイプラインの構築 – 30分
 :imagesdir: ../assets/images
 
-== Goals of this lab
+== 本演習の目標
 
-The goal of this exercise is to build and deploy the modernized customer application to OpenShift using link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.11/html-single/cicd/index#op-detailed-concepts[OpenShift Pipelines^]. You will accomplish this with the following steps:
+本演習の目標は、 link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.11/html-single/cicd/index#op-detailed-concepts[OpenShift Pipelines^]　を使用して、モダナイゼーションされた「Customers」アプリケーションを OpenShift に構築してデプロイすることです。本演習では、以下の手順を実施します。
 
-* Use the https://tekton.dev/[Tekton^] Pipeline to build and deploy the new, modernized application using Red Hat JBoss Web Server instead of Apache Tomcat as the runtime.
-* Set up the configuration for the *customers* service to connect to the Oracle database VM which is now running on OpenShift Container Platform
-* Test the *customers* service
+* https://tekton.dev/[Tekton^] Pipelineを使用して、Apache Tomcatの代わりに、ランタイムとしてRed Hat JBoss Web Serverを使用し、新しくモダナイゼーションされたアプリケーションの構築およびデプロイの実施
+* OpenShift Container Platform上で稼働中のOracleデータベースVMに、 *customers* サービスが接続するための設定の実施
+* *customers*　サービスのテスト
 
-== 2.1. Update Oracle DBMS Connection using Helm
+== 2.1. HelmによるOracle DBMS接続の更新
 
-=== 2.1.1. Why OpenShift with Helm?
+=== 2.1.1. OpenShiftでHelmを使用する理由
 
-https://docs.openshift.com/container-platform/4.10/applications/working_with_helm_charts/understanding-helm.html[Helm^] is a package and install manager that standardizes and simplifies packaging and deployment of containerized applications with Kubernetes, anywhere in the hybrid cloud. Helm lets developers package their applications so that they can be easily shared and deployed by anyone in their organization and beyond.
+https://docs.openshift.com/container-platform/4.10/applications/working_with_helm_charts/understanding-helm.html[Helm^] は、ハイブリッドクラウドのあらゆる場所で、Kubernetesを用いてコンテナ化されたアプリケーションのパッケージングおよびデプロイを標準化、簡素化するパッケージ＆インストールマネージャです。これにより、開発者が作成したアプリケーションをパッケージ化し、組織内外の誰もが簡単に共有およびデプロイできるようにします。
 
-Helm can also be used to automate *day-1* tasks like installation and basic configuration management for setting up the applications, and some *day-2* operations like performing some simple upgrades and rollbacks.
+またHelmを用いることで、アプリケーションのインストールや基本的な構成管理といった *Day-1* タスクや、シンプルなアップグレードやロールバックの実行というような *Day-2* オペレーションを自動化するためにも使用可能です。
 
-=== 2.1.2. Update the Helm Chart for a new JDBC configuration
+=== 2.1.2. 新しいJDBC構成向けにHelmチャートの更新
 
-The *customers* application in the OpenShift cluster currently has a connection failure because the application still tries to connect to the Oracle database running on RHV. To fix the issue, you need to update the *JDBC* configuration that points to the migrated Oracle database on OpenShift virtualization.
+現在、OpenShiftクラスタにある *customers* アプリケーションは、依然としてRHV上で動作するOracleデータベースに接続しようとするため、接続に失敗している状況となります。この問題を解決するには、OpenShift virtualization上でマイグレーションしたOracleデータベースを指定している *JDBC* の設定を更新する必要があります。
 
-[IMPORTANT]
+[重要]
 ====
-To save your time to go through the hands-on labs today, our SRE team has already migrated the VM running Oracle database to the OpenShift virtualization in the *retail-%USERID%* project.
+今回のハンズオンラボにおいては、演習時間を確保するため、SREチームにより、すでに *retail-%USERID%* プロジェクトでOracleデータベースが稼働しているVMはOpenShift virtualizationにマイグレーション済みです。
 ====
 
-The JDBC configuration is currently managed by the _Helm chart_ to automate day 1 & 2 operations for the modernized Globex retail system. Let's go back to the link:https://codeserver-codeserver-%USERID%.%SUBDOMAIN%[VS Code server^] and explore the *helm/customer-tomcat-gitops* directory.
+JDBCの設定は現在、モダナイゼーションされたGlobex RetailのシステムのDay-1およびDay-2オペレーションを自動化するためにHelmチャートで管理されています。link:https://codeserver-codeserver-%USERID%.%SUBDOMAIN%[VS Code server^] に戻り、 *helm/customer-tomcat-gitops* ディレクトリを確認してください。
 
-Take a look at `persistence.properties` file to understand how the Helm chart allows you to define the JDBC configuration.
+`persistence.properties` ファイルの内容を見て、HelmチャートでJDBC接続の設定をどのように定義可能か確認します。
 
 image::gitops-persistence.png[gitops-persistence]
 
-[NOTE]
+[注]
 ====
-The best developer practice for updating the *JDBC configuration* is that you change the configurations locally in VS Code server. Then, when you commit and push the changes to your Gitea repository, it will trigger the `OpenShift pipeline and GitOps` to automatically update OpenShift `ConfigMap` and `Secret` objects.
+*JDBCの設定* を更新する際の、開発者目線でのベストプラクティスな方法として、VS Code Serverのローカル環境にて設定変更を行うことが挙げられます。そして作業後、その変更をコミットしてGiteaリポジトリにプッシュすることで、 `OpenShift pipeline と GitOps` をトリガーにして、OpenShiftの `ConfigMap` と `Secret` オブジェクトを自動的にアップデートされます。
 ====
 
-Access link:https://argocd-server-retail-%USERID%.%SUBDOMAIN%[ArgoCD web console^]. Click `LOG IN VIA OPENSHIFT`:
+link:https://argocd-server-retail-%USERID%.%SUBDOMAIN%[ArgoCD のwebコンソール^]　にアクセスし、 `LOG IN VIA OPENSHIFT` をクリックしてください。
 
 image::argocd-login.png[argocd-login]
 
-Then, enter your OpenShift login credentials.
+その後、OpenShiftのログイン認証情報を入力してください。
 
 * Username: `%USERID%`
 * Password: `{openshift-password}`
 
-You will see that the `customers-tomcat-gitops` status is *Degraded* because the application still refers to the old database hostname (e.g.*oracle-db-database*).
+ログイン後、アプリケーションはまだ古いデータベースのホスト名（例： *oracle-db-database* ）を参照しているため、 `customers-tomcat-gitops`　のステータスが *Degraded* であることが確認できます。
 
-Click on `applications`.
-
+`applications` をクリックしてください。
+ 
 image::argocd-application.png[argocd-application]
 
-Click on `APP DETAILS` to show the detail page for the application. Then, switch to `PARAMETER` tab and click on `EDIT`.
+`APP DETAILS` をクリックすると、アプリケーションの詳細ページが表示されます。次に、 `PARAMETER` タブに切り替えて、 `編集` をクリックしてください。
 
 image::argocd-application-details.png[argocd-application-details]
 
-Replace keys and values of `customerDatabase` with the following data that refer to the Oracle virtual machine on Red Hat OpenShift. It should look like this:
+`customerDatabase` のキーおよび値を、Red Hat OpenShift上のOracleの仮想マシンを参照する以下のデータへ置き換えてください。それぞれ以下のような値になります。
 
 * customerDatabase.hostname: `oracle-database`
 * customerDatabase.password: `redhat`
 
 image::argocd-application-update.png[argocd-application-update]
 
-Click on `SAVE`, then close the popup window by clicking `X` on at the top right corner.
+置き換え後、 `SAVE` をクリックし、右上の `X` をクリックしてポップアップウィンドウを閉じます。
 
-Now you will see the `OutOfSync` status of the `customers-tomcat-gitops` application because you just updated the application object, and it's now different from what's deployed (hence OutOfSync).
+アプリケーションオブジェクトを更新したため、 `customers-tomcat-gitops` アプリケーションのステータスが `OutOfSync` と表示されるようになり、デプロイされたものとは異なる状態になっています（そのため、「OutOfSync」となっています）。
 
 image::argocd-application-outofsync.png[argocd-application-outofsync]
 
-Click on `SYNC`. Then, click on `SYNCHRONIZE` on the left popup window.
+`SYNC` をクリックし、その後、左のポップアップウィンドウで `SYNCHRONIZE` をクリックしてください。
 
 image::argocd-application-sync.png[argocd-application-sync]
 
-It will take a few moments to synchronize the application. Wait for it to finish and show:
+アプリケーションの同期にはしばらく時間がかかるため、完了までお待ちください。
 
 image::argocd-application-synced.png[argocd-application-synced]
 
-CLick this link to go back to the OpenShift web console and look at the link:https://console-openshift-console.%SUBDOMAIN%/k8s/ns/retail-%USERID%/secrets/customers-secret[customers-secret^]. You will see the updated the JDBC configuration values.
+このリンクをクリックし、OpenShift Web Consoleに戻り、 link:https://console-openshift-console.%SUBDOMAIN%/k8s/ns/retail-%USERID%/secrets/customers-secret[customers-secret^] を確認してください。確認すると、JDBCの設定値が更新されていることが分かります。
 
 image::argocd-application-secret.png[argocd-application-secret]
 
-== 2.2. Run OpenShift Pipelines
+== 2.2. OpenShift Pipelinesの実行
 
-=== 2.2.1 Why OpenShift Pipelines?
+=== 2.2.1 OpenShift Pipelinesを使用する理由
 
-OpenShift Pipelines provides a *kubernetes-native CI/CD* framework based on https://tekton.dev[Tekton^] to design and run your pipelines, and is designed to run each step of the CI/CD pipeline in its own container, allowing each step to scale independently to meet the demands of the pipeline.
+OpenShift Pipelinesは、パイプラインを設計、実行するために https://tekton.dev[Tekton^] をベースとした *KubernetesネイティブのCI/CD* フレームワークを提供しており、CI/CDパイプラインの各ステップを独自のコンテナで実行し、パイプラインの要求に応じて各ステップを独立して拡張できるように設計されています。
 
-By extending Kubernetes/OpenShift with Custom Resource Definitions (CRDs), OpenShift Pipelines makes CI/CD concepts such as `pipeline`, `task`, and `step` natively in terms of increasing the scalability, security, ease of deployment capabilities of Kubernetes.
+OpenShift Pipelinesは、Kubernetes/OpenShiftをCRD（Custom Resource Definition）で拡張することで、Kubernetesの拡張性、セキュリティ、デプロイの容易性を高める観点から、 `パイプライン`、 `タスク`、 `ステップ` などCI/CDコンセプトをネイティブにするソリューションです。
 
 image::tekton-concept.png[tekton-concept]
 
-The pipeline executes _tasks_ across a number of defined _steps_. There are tasks you will use that each have a single purpose:
+パイプラインは、定義された複数の _ステップ_ にまたがって _タスク_ を実行します。実行するタスクには、それぞれ単一の使用用途があります。
 
-* *Clone Repository* downloads the source code from the target Git repository.
-* *Build from Source* builds the application artifact from source code. This task has been tweaked to allow selecting the target subdirectory from the repository in which the target application source is available, allowing you to have several application/components available in a single repository. *This way of versioning different services/components is highly discouraged*, as the optimal approach would be to have a dedicated repository for each component since their lifecycle should be independent. Nevertheless, this choice was made to gather all demo materials on a single repository for simplicity purposes.
-* *Build Image* uses a Dockerfile packaged present in an application to build an image and push it to the target registry. The image will be tagged with the short commit hash of the source it contains.
-* *Update Manifest* uses the short commit hash tag to update the application manifest in Git and point to the newly built image. Application deployment is then delegated to ArgoCD, which is continuously polling the configuration repository for changes and creates/updates all OpenShift objects accordingly.
+*	*Clone Repository* は、ターゲットのGitリポジトリからソースコードをダウンロードします。
+* *Build from Source* は、ソースコードからアプリケーションアーティファクトのビルドを実行します。このタスクにより、ターゲットアプリケーションソースが利用可能なリポジトリからターゲットサブディレクトリを選択できるように調整され、単一のリポジトリで複数のアプリケーション、コンポーネントを利用できるようになりました。 *しかしながら通常は、このような方法で異なるサービスやコンポーネントをバージョン管理することは、非常に好ましくありません。* 最適なアプローチとして、各コンポーネントのライフサイクルが独立している必要があるため、専用のリポジトリを持つことが推奨されますが、本演習での学習ため、このようにデモ素材を1つのリポジトリに集約しています。
+* *Build Image* は、アプリケーションにパッケージされたDockerfileを使用してイメージを構築し、ターゲットレジストリにプッシュします。このイメージには、含まれるソースのショートコミットハッシュがタグ付けされます。
+*	*Update Manifest* は、ショートコミットハッシュタグを使って、Gitのアプリケーションマニフェストを更新し、新しくビルドされたイメージを指します。アプリケーションのデプロイはArgoCDに委ねられ、ArgoCDは設定リポジトリに変更がないか継続的にポーリングし、それに応じてすべてのOpenShiftオブジェクトを作成および更新しています。
 
-The pipeline accepts the following parameters:
+パイプラインには、以下のパラメータが設定可能です。
 
-* *git-url*: URL of the target Git repository.
-* *git-branch*: target branch to work with. (default: _main_)
-* *app-subdir*: Subdirectory from the repository in which the application source code is stored.
-* *target-namespace*: Namespace/project in which to deploy the application.
+* *git-url*: 対象のGitリポジトリのURL
+* *git-branch*: 作業対象のGitブランチ（デフォルト: _main_）
+* *app-subdir*: アプリケーションのソースコードが格納されているリポジトリからサブディレクトリを指定
+* *target-namespace*: アプリケーショのデプロイ先のNamespaceプロジェクト。
 * *target-registry*: Registry to push the built image to. (default: _image-registry.openshift-image-registry.svc:5000_, i.e. the internal OpenShift container registry)
+* *target-registry*: ビルドしたイメージをプッシュするレジストリ（デフォルト: _image-registry.openshift-image-registry.svc:5000_、OpenShiftコンテナの内部レジストリになります）
 
-=== 2.2.2 Execute the Customers Pipelines
+=== 2.2.2 「Customers」パイプラインの実行
 
-It is possible to configure webhooks and event listeners/triggers to automatically execute pipelines when source code commits are made.
+Webhookやイベントリスナー、トリガーを設定し、ソースコードのコミット時にパイプラインを自動実行することが可能です。
 
-For simplicity in this exercise, you will trigger the pipeline run manually.
+しかし、本演習においては、この設定を簡素なものにするため、パイプラインの実行を手動で実行します。
 
-First, open a new browser to access the link:https://console-openshift-console.%SUBDOMAIN%/dev-pipelines/ns/cicd-%USERID%[OpenShift Pipleline^].
+まず、新しくブラウザを開き、 link:https://console-openshift-console.%SUBDOMAIN%/dev-pipelines/ns/cicd-%USERID%[OpenShift Pipleline^] にアクセスしてください。
 
-Use the following credentials if you haven't logged in to the OpenShift cluster before.
+OpenShiftクラスタにログインしたことがない場合は、以下の認証情報を使用し、ログインしてください。
 
 image::openshift_login.png[openshift_login]
 
-Login using your credentials:
+以下の認証情報を使用して、ログインします。
 
 * Username: `%USERID%`
 * Password: `{openshift-password}`
 
-Then, you will see a pre-defined `java-deployment` pipeline in the `cicd-%USERID%` project in the _Developer perspective_.
+ログイン後、Developerパースペクティブの `cicd-%USERID%` プロジェクトに、あらかじめ定義された `java-deployment pipeline` が表示されます。
 
-Click on the pipeline.
+`java-deployment pipeline` をクリックしてください。
 
 image::ama-pipeline.png[ama-pipeline]
 
-Click on `Start` in *Actions* dropdown to run the pipeline.
+ *Actions* ドロップダウンメニューの `Start` をクリックし、パイプラインを実行してください。
 
 image::ama-pipeline-start.png[ama-pipeline-start]
 
-A *PipelineRun* represents a single run of the pipeline, tied to the source code and image resources that should be used for this specific invocation.
+*PipelineRun* は、パイプラインの単発実行を表し、この特定の呼び出しに使用されるソースコードとイメージリソースを結び付けます。
 
-This dialog box is where you bind the final target values for the source repo of the _build-artifact_ step, and the target namespace to deploy in the _update-manifest-and-push_ step. Update the workspaces section using the following values, and then click *Start*.
+このダイアログボックスでは、 _build-artifact_ ステップのソースリポジトリおよび _update-manifest-and-push_ ステップで展開するターゲットNamespaceに対して、最終的なターゲット値をバインドできます。以下の値を使用してワークスペースセクションを更新し、その後 *Start* をクリックしてください。
 
-[NOTE]
+[注]
 ====
-Leave default values for the other keys such as `git-url, git-branch, app-subdir, target-namespace, and target-registry`.
+その他のキーの値（ `git-url, git-branch, app-subdir, target-namespace, and target-registry` ）は、変更する必要はありません。
 ====
 
 * ws: `customers-pvc` in *PersistentVolumeClaim*
 
 image::ama-pipeline-start-popup.png[ama-pipeline-start-popup]
 
-As soon as you start the *java-deployment-pipeline* pipeline, a _pipelinerun_ is instantiated and pods are created to execute the tasks that are defined in the pipeline. After a few minutes, the pipeline should finish successfully. You can hover over the steps to get a quick snapshot of the step’s progress, or click on the steps to see detailed logs of the steps.
+*java-deployment-pipeline* を起動するとすぐに _pipelinerun_ がインスタンス化され、パイプラインで定義されているタスクを実行するためのpodが作成されます。パイプライン起動から数分ほどで、正常完了します。ステップにカーソルを合わせると、ステップの進捗状況に関するスナップショットを簡単に確認でき、ステップをクリックすると、対象のステップに関する詳細なログが確認できます。
 
 image::ama-pipeline-complete.png[ama-pipeline-complete]
 
-=== 2.2.3 Add Labels for better Topology View
+=== 2.2.3 Topologyビューをより良くするためにラベルを追加
 
-The Globex retail system has deployed multiple microservices to the OpenShift cluster. Each microservices has complex relations with the other microservices and databases. This architecture might not be immediately understandable for developers and SREs. Fortunately the OpenShift developer console provides an intuitive `topology` view with helpful labels and annotations. These labels detail the explicit relations among deployed applications in the same namespace.
+Globex Retailのシステムでは、OpenShiftクラスタに複数のマイクロサービスを導入しています。各マイクロサービスは、それぞれ他のマイクロサービスおよびデータベースとの間に複雑な関連性を持っています。このアーキテクチャは、開発者やSREチームからすると、瞬時に理解できるものではないかもしれません。そのような状況に対応できるように、OpenShift Developerコンソールでは、構成を理解する際にお役立ていただけるラベルや注釈を備えた直感的な `topology` ビューを提供しています。このラベルは、同じNamespaceにデプロイされたアプリケーション間の明示的な関連性を詳述します。
 
 Run the following commands to add labels and annotations to each deployment to show which _languages_, _frameworks_, and _runtimes_ are used for each application:
+以下のコマンドを実行し、各アプリケーションで使用されている _言語_、_フレームワーク_、_ランタイム_ を表示するために、各デプロイメントにラベルおよび注釈を追加してください。
 
 [.console-input]
 [source,bash]
@@ -174,20 +176,19 @@ oc label deployment/gateway app.kubernetes.io/part-of=gateway app.openshift.io/r
 oc annotate deployment/gateway app.openshift.io/connects-to='["inventory","orders","customers",{"apiVersion":"apps/v1","kind":"Deployment","name":"customers"}]' --overwrite
 ----
 
-[NOTE]
+[注]
 ====
-You might have no connection between `gateway` and `customers`. In that case, you can add the connection by dragging an arrow from `gateway` to `customers` _Dev Console_. This is a visual cue that the two are tied together.
+`gateway` と `customers` との間にコネクションがない可能性もありますが、その場合、`gateway` から `customers` の「Dev Console」に矢印をドラッグすることでコネクションを追加できます。この情報は、両者のコネクションが存在していること示す視覚的な情報となります。
 ====
 
-Next, go back to the link:https://console-openshift-console.%SUBDOMAIN%/topology/ns/retail-%USERID%?view=graph[Topology View^] in `retail-%USERID%` project at Developer perspective, the applications deployment should appear as follows:
+その後、Developerパースペクティブにある `retail-%USERID%` プロジェクトの link:https://console-openshift-console.%SUBDOMAIN%/topology/ns/retail-%USERID%?view=graph[Topology ビュー^] に戻ると、アプリケーションのデプロイメントが以下のように表示されます。
 
 image::app-topology.png[app-topology]
 
-== Congratulations!
+== おめでとうございます!
 
-You have built and deployed the modernized customer application to OpenShift using a CI/CD pipeline and connected the customer microservice to the new Oracle database running with OpenShift Virtualization.
+以上で、CI/CDパイプラインを使用して、モダナイゼーションされたお客様のアプリケーションを、OpenShiftに構築およびデプロイし、お客様のマイクロサービスをOpenShift Virtualizationで実行されている新しいOracleデータベースに接続することができました。
 
-In the next step you will first update the `gateway` to connect to the new `customers` service using dynamic discovery (vs. static IP address).
+次のステップでは、はじめに `gateway` をアップデートして、Dynamic Discoveryを使用して `New Customers`サービスに接続します（静的IPアドレスとの比較）。
 
-Next, you will integrate the app with OpenShift GitOps, enabling declarative description of an application's components, and automatic synchronization of the deployed application. This is critical to
-improving how software is delivered, minimizing the chance for configuration drift and enabling better auditability over time. Let's go!
+その後、このアプリケーションをOpenShift GitOpsと統合することで、アプリケーションのコンポーネントを宣言的に記述し、デプロイされたアプリケーションを自動的に同期させることができます。このステップは、ソフトウェアの提供方法を改善し、コンフィグレーションドリフトが発生する可能性を最小限に抑え、長期にわたってより良い可監査性を実現するために重要なものとなります。次のステップへ進んでください。
