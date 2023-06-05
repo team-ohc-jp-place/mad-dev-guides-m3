@@ -7,7 +7,7 @@
 
 * https://tekton.dev/[Tekton^] Pipelineを使用して、Apache Tomcatの代わりに、ランタイムとしてRed Hat JBoss Web Serverを使用し、新しくモダナイゼーションされたアプリケーションの構築およびデプロイの実施
 * OpenShift Container Platform上で稼働中のOracleデータベースVMに、 *customers* サービスが接続するための設定の実施
-* *customers*　サービスのテスト
+* *customers* サービスのテスト
 
 == 2.1. HelmによるOracle DBMS接続の更新
 
@@ -21,7 +21,7 @@ https://docs.openshift.com/container-platform/4.10/applications/working_with_hel
 
 現在、OpenShiftクラスタにある *customers* アプリケーションは、依然としてRHV上で動作するOracleデータベースに接続しようとするため、接続に失敗している状況となります。この問題を解決するには、OpenShift virtualization上でマイグレーションしたOracleデータベースを指定している *JDBC* の設定を更新する必要があります。
 
-[重要]
+[IMPORTANT]
 ====
 今回のハンズオンラボにおいては、演習時間を確保するため、SREチームにより、すでに *retail-%USERID%* プロジェクトでOracleデータベースが稼働しているVMはOpenShift virtualizationにマイグレーション済みです。
 ====
@@ -32,7 +32,7 @@ JDBCの設定は現在、モダナイゼーションされたGlobex Retailのシ
 
 image::gitops-persistence.png[gitops-persistence]
 
-[注]
+[NOTE]
 ====
 *JDBCの設定* を更新する際の、開発者目線でのベストプラクティスな方法として、VS Code Serverのローカル環境にて設定変更を行うことが挙げられます。そして作業後、その変更をコミットしてGiteaリポジトリにプッシュすることで、 `OpenShift pipeline と GitOps` をトリガーにして、OpenShiftの `ConfigMap` と `Secret` オブジェクトを自動的にアップデートされます。
 ====
@@ -52,7 +52,7 @@ image::argocd-login.png[argocd-login]
  
 image::argocd-application.png[argocd-application]
 
-`APP DETAILS` をクリックすると、アプリケーションの詳細ページが表示されます。次に、 `PARAMETER` タブに切り替えて、 `編集` をクリックしてください。
+`APP DETAILS` をクリックすると、アプリケーションの詳細ページが表示されます。次に、 `PARAMETER` タブに切り替えて、 `EDIT` をクリックしてください。
 
 image::argocd-application-details.png[argocd-application-details]
 
@@ -130,7 +130,7 @@ image::openshift_login.png[openshift_login]
 
 image::ama-pipeline.png[ama-pipeline]
 
- *Actions* ドロップダウンメニューの `Start` をクリックし、パイプラインを実行してください。
+*Actions* ドロップダウンメニューの `Start` をクリックし、パイプラインを実行してください。
 
 image::ama-pipeline-start.png[ama-pipeline-start]
 
@@ -138,7 +138,7 @@ image::ama-pipeline-start.png[ama-pipeline-start]
 
 このダイアログボックスでは、 _build-artifact_ ステップのソースリポジトリおよび _update-manifest-and-push_ ステップで展開するターゲットNamespaceに対して、最終的なターゲット値をバインドできます。以下の値を使用してワークスペースセクションを更新し、その後 *Start* をクリックしてください。
 
-[注]
+[NOTE]
 ====
 その他のキーの値（ `git-url, git-branch, app-subdir, target-namespace, and target-registry` ）は、変更する必要はありません。
 ====
@@ -155,7 +155,6 @@ image::ama-pipeline-complete.png[ama-pipeline-complete]
 
 Globex Retailのシステムでは、OpenShiftクラスタに複数のマイクロサービスを導入しています。各マイクロサービスは、それぞれ他のマイクロサービスおよびデータベースとの間に複雑な関連性を持っています。このアーキテクチャは、開発者やSREチームからすると、瞬時に理解できるものではないかもしれません。そのような状況に対応できるように、OpenShift Developerコンソールでは、構成を理解する際にお役立ていただけるラベルや注釈を備えた直感的な `topology` ビューを提供しています。このラベルは、同じNamespaceにデプロイされたアプリケーション間の明示的な関連性を詳述します。
 
-Run the following commands to add labels and annotations to each deployment to show which _languages_, _frameworks_, and _runtimes_ are used for each application:
 以下のコマンドを実行し、各アプリケーションで使用されている _言語_、_フレームワーク_、_ランタイム_ を表示するために、各デプロイメントにラベルおよび注釈を追加してください。
 
 [.console-input]
@@ -176,7 +175,7 @@ oc label deployment/gateway app.kubernetes.io/part-of=gateway app.openshift.io/r
 oc annotate deployment/gateway app.openshift.io/connects-to='["inventory","orders","customers",{"apiVersion":"apps/v1","kind":"Deployment","name":"customers"}]' --overwrite
 ----
 
-[注]
+[NOTE]
 ====
 `gateway` と `customers` との間にコネクションがない可能性もありますが、その場合、`gateway` から `customers` の「Dev Console」に矢印をドラッグすることでコネクションを追加できます。この情報は、両者のコネクションが存在していること示す視覚的な情報となります。
 ====
@@ -189,6 +188,6 @@ image::app-topology.png[app-topology]
 
 以上で、CI/CDパイプラインを使用して、モダナイゼーションされたお客様のアプリケーションを、OpenShiftに構築およびデプロイし、お客様のマイクロサービスをOpenShift Virtualizationで実行されている新しいOracleデータベースに接続することができました。
 
-次のステップでは、はじめに `gateway` をアップデートして、Dynamic Discoveryを使用して `New Customers`サービスに接続します（静的IPアドレスとの比較）。
+次のステップでは、はじめに `gateway` をアップデートして、Dynamic Discoveryを使用して `New Customers` サービスに接続します（静的IPアドレスとの比較）。
 
 その後、このアプリケーションをOpenShift GitOpsと統合することで、アプリケーションのコンポーネントを宣言的に記述し、デプロイされたアプリケーションを自動的に同期させることができます。このステップは、ソフトウェアの提供方法を改善し、コンフィグレーションドリフトが発生する可能性を最小限に抑え、長期にわたってより良い可監査性を実現するために重要なものとなります。次のステップへ進んでください。
