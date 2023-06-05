@@ -3,7 +3,7 @@
 
 == 本演習の目標
 
-本演習では、　link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.11/html-single/cicd/index#about-redhat-openshift-gitops_understanding-openshift-gitops[OpenShift GitOps (ArgoCD)^]　を使って、モダナイゼーションされたお客様アプリケーションをOpenShiftに構築し、デプロイすることが目標です。
+本演習では、 link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.11/html-single/cicd/index#about-redhat-openshift-gitops_understanding-openshift-gitops[OpenShift GitOps (ArgoCD)^] を使って、モダナイゼーションされたお客様アプリケーションをOpenShiftに構築し、デプロイすることが目標です。
 
 * モダナイゼーションされた *customers* サービスを指すように、 *gateway* サービスの構成を更新
 * *frontend* のサービスが以前と同じように動作可能か確認
@@ -28,7 +28,7 @@ GitOpsにおける変更のトレーサビリティは、アプリケーショ�
 
 image::gateway-config.png[gateway-config]
 
-ArgoCDの管理コンソールのlink:https://argocd-server-retail-%USERID%.%SUBDOMAIN%/applications/applications?view=tree&resource=&node=argoproj.io%2FApplication%2Fretail-%USERID%%2Fapplications%2F0&tab=parameters[APP DETAILS^] に戻り、`EDIT` をクリックしてください。
+ArgoCDの管理コンソールの link:https://argocd-server-retail-%USERID%.%SUBDOMAIN%/applications/applications?view=tree&resource=&node=argoproj.io%2FApplication%2Fretail-%USERID%%2Fapplications%2F0&tab=parameters[APP DETAILS^] に戻り、`EDIT` をクリックしてください。
 
 image::gateway-config-argo.png[gateway-config-argo]
 
@@ -60,19 +60,18 @@ image::gateway-new-configmap.png[gateway-new-configmap]
 
 == 3.2. GLOBEXのwebページを再訪問
 
-Let's go back to the `Customers` in the link:https://ordersfrontend-retail-%USERID%.%SUBDOMAIN%[GLOBEX web page^].
 link:https://ordersfrontend-retail-%USERID%.%SUBDOMAIN%[GLOBEX webページ^] にある `Customers` に戻ってください。
 
 image::frontend.png[Frontend]
 
-[注]
+[NOTE]
 ====
 「Customers」アプリケーションが OpenShift Virtualization 上のデータベースにアクセスできず、「- `java.sql.SQLSyntaxErrorException: ORA-00942: table or view does not exist.` エラーのため、「Customers」データに対して 「Unknown result」が表示される可能性がありますが、その場合は、OpenShiftの管理コンソールでpodを削除して、 `customers pod` を再起動してください。
 ====
 
 == まとめ
 
-以上で、OpenShift PipelineとGitOpsを統合して、継続的デリバリーの自動化を行うことで、「New Customers」アプリケーションのデプロイに成功しました。`モジュール4` と `モジュール6` では、API管理を利用したアプリケーションの拡張方法と、イベント駆動型アーキテクチャの実装について学習します。
+以上で、OpenShift PipelineとGitOpsを統合して、継続的デリバリーの自動化を行うことで、「New Customers」アプリケーションのデプロイに成功しました。`モジュール4` では、イベント駆動型アーキテクチャの実装について学習します。
 
 == Additional Resources
 
