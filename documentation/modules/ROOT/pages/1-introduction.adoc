@@ -12,7 +12,7 @@ image::mod-strategies-m3.png[Modernization Strategies]
 
 [IMPORTANT]
 ====
-Globexの開発者は、 https://access.redhat.com/documentation/en-us/migration_toolkit_for_applications/6.0/html-single/introduction_to_the_migration_toolkit_for_applications/index[Migration Toolkit for Applications (MTA)^] のアセスメント、分析ツールを使って、レガシーアプリケーション (*customers*) をRed Hat OpenShiftにモダナイズ済みです。一方、SREチームも `モジュール 1` と`モジュール 2`により、Red Hat VirtualizationからOpenShift VirtualizationへのOracleデータベースのマイグレーションを完了しています。
+Globexの開発者は、 https://access.redhat.com/documentation/en-us/migration_toolkit_for_applications/6.0/html-single/introduction_to_the_migration_toolkit_for_applications/index[Migration Toolkit for Applications (MTA)^] のアセスメント、分析ツールを使って、レガシーアプリケーション (*customers*) をRed Hat OpenShiftにモダナイズ済みです。一方、SREチームも `モジュール 1` と `モジュール 2` により、Red Hat VirtualizationからOpenShift VirtualizationへのOracleデータベースのマイグレーションを完了しています。
 ====
 
 このモジュールでは、2つのフェーズ（_パイプライン_、_GitOps_）を通じて、以下の手順にて高度なビルドとデプロイメント機能を構築します。
