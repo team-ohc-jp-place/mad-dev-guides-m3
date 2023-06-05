@@ -66,7 +66,7 @@ image::frontend.png[Frontend]
 
 [NOTE]
 ====
-「Customers」アプリケーションが OpenShift Virtualization 上のデータベースにアクセスできず、「- `java.sql.SQLSyntaxErrorException: ORA-00942: table or view does not exist.` エラーのため、「Customers」データに対して 「Unknown result」が表示される可能性がありますが、その場合は、OpenShiftの管理コンソールでpodを削除して、 `customers pod` を再起動してください。
+「Customers」アプリケーションが OpenShift Virtualization 上のデータベースにアクセスできず、 `- java.sql.SQLSyntaxErrorException: ORA-00942: table or view does not exist.` エラーのため、「Customers」データに対して 「Unknown result」が表示される可能性がありますが、その場合は、OpenShiftの管理コンソールでpodを削除して、 `customers pod` を再起動してください。
 ====
 
 == まとめ
