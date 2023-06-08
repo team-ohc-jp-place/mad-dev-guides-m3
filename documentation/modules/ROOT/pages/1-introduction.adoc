@@ -19,18 +19,18 @@ Globexの開発者は、 https://access.redhat.com/documentation/en-us/migration
 
 * link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.11/html-single/cicd/index#op-detailed-concepts[OpenShift Pipeline^] をベースとした継続的インテグレーションおよび継続的デリバリー（CI/CD）を以下の主要機能で構築します。
 
-** 必要となるすべての依存関係を持つパイプラインを、隔離されたコンテナで実行するサーバーレスにおけるCI/CDシステムの構築
-** マイクロサービスベースのアーキテクチャで自動化作業を設計する分散型チームの実現。
-** 既存のKubernetesツールとの拡張や統合を容易にする、標準的なCI/CDパイプライン定義を使用し、オンデマンドでの拡張を実現。
-** Source-to-Image（S2I）、Buildah、Buildpacks、KanikoなどのKubernetesツールでのイメージの構築を可能にし、任意のKubernetesプラットフォームにおける移植の実現
-** OpenShift Container Platform Developerコンソールを使用して、Tektonリソースの作成、パイプライン実行のログの表示、OpenShift Container Platformネームスペースのパイプラインの管理の実施。
+** 必要となるすべての依存関係を持つパイプラインを、隔離されたコンテナで実行するサーバーレスなCI/CDシステムの構築
+** マイクロサービスベースのアーキテクチャで自動化作業を設計する分散型チームの実現
+** 既存のKubernetesツールとの拡張や統合を容易にする、標準的なCI/CDパイプライン定義を使用し、オンデマンドでの拡張を実現
+** Source-to-Image（S2I）、Buildah、Buildpacks、KanikoなどのKubernetesツールでのイメージの構築を可能にし、あらゆるKubernetesプラットフォームにおける移植性の実現
+** OpenShift Container Platform Developerコンソールを使用して、Tektonリソースの作成、パイプライン実行のログの表示、OpenShift Container Platformのネームスペースでパイプラインを管理
 
 * モダナイゼーションされたアプリケーションをRed Hat OpenShiftにデプロイする際に使用する link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.11/html-single/cicd/index#about-redhat-openshift-gitops_understanding-openshift-gitops[OpenShift GitOps (ArgoCD)^] には、以下主要機能があります。
 
-** 対象のクラスタがそれぞれ、構成、モニタリング、ストレージ状態が類似しているかどうかの確認
+** 対象のすべてのクラスタで、設定、モニタリング、ストレージの状態が同様の状態になるように維持
 ** 複数のOpenShift Container Platformクラスタへの設定変更の適用、または設定戻しの実行
-** さまざまな環境に対応しているテンプレート化された構成
-** ステージング環境から本番環境の、クラスタ間でアプリケーションのプロモート作業
+** テンプレート化された構成を異なる環境に適用
+** ステージング環境から本番環境へクラスタ間でアプリケーションのプロモート
 
 == 1.1. Globex Retailのシステムアーキテクチャの理解
 
