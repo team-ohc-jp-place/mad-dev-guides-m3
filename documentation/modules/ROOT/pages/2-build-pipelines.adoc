@@ -103,8 +103,7 @@ image::tekton-concept.png[tekton-concept]
 * *git-url*: 対象のGitリポジトリのURL
 * *git-branch*: 作業対象のGitブランチ（デフォルト: _main_）
 * *app-subdir*: アプリケーションのソースコードが格納されているリポジトリからサブディレクトリを指定
-* *target-namespace*: アプリケーショのデプロイ先のNamespaceプロジェクト。
-* *target-registry*: Registry to push the built image to. (default: _image-registry.openshift-image-registry.svc:5000_, i.e. the internal OpenShift container registry)
+* *target-namespace*: アプリケーショのデプロイ先のNamespaceプロジェクト
 * *target-registry*: ビルドしたイメージをプッシュするレジストリ（デフォルト: _image-registry.openshift-image-registry.svc:5000_、OpenShiftコンテナの内部レジストリになります）
 
 === 2.2.2 「Customers」パイプラインの実行
@@ -153,9 +152,9 @@ image::ama-pipeline-complete.png[ama-pipeline-complete]
 
 === 2.2.3 Topologyビューをより良くするためにラベルを追加
 
-Globex Retailのシステムでは、OpenShiftクラスタに複数のマイクロサービスを導入しています。各マイクロサービスは、それぞれ他のマイクロサービスおよびデータベースとの間に複雑な関連性を持っています。このアーキテクチャは、開発者やSREチームからすると、瞬時に理解できるものではないかもしれません。そのような状況に対応できるように、OpenShift Developerコンソールでは、構成を理解する際にお役立ていただけるラベルや注釈を備えた直感的な `topology` ビューを提供しています。このラベルは、同じNamespaceにデプロイされたアプリケーション間の明示的な関連性を詳述します。
+Globex Retailのシステムでは、OpenShiftクラスタに複数のマイクロサービスを導入しています。各マイクロサービスは、それぞれ他のマイクロサービスおよびデータベースとの間に複雑な関連性を持っています。このアーキテクチャは、開発者やSREチームからすると、瞬時に理解できるものではないかもしれません。そのような状況に対応できるように、OpenShift Developerコンソールでは、構成を理解する際にお役立ていただけるラベルやアノテーションを備えた直感的な `topology` ビューを提供しています。このラベルは、同じNamespaceにデプロイされたアプリケーション間の明示的な関連性を詳述します。
 
-以下のコマンドを実行し、各アプリケーションで使用されている _言語_、_フレームワーク_、_ランタイム_ を表示するために、各デプロイメントにラベルおよび注釈を追加してください。
+以下のコマンドを実行し、各アプリケーションで使用されている _言語_、_フレームワーク_、_ランタイム_ を表示するために、各デプロイメントにラベルおよびアノテーションを追加してください。
 
 [.console-input]
 [source,bash]
