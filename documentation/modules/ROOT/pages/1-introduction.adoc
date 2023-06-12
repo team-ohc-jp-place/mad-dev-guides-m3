@@ -55,7 +55,7 @@ _ImagePullBackOffエラー_ のため、「Customers」のPodがFailed状態と�
 
 現在の問題となっているものは、 *customers* サービスです。
 
-* 「Customers」サービスでは、 `Red Hat Virtualization` 上のVMで `Apache Tomcat` 上で動作する古いJavaコードベースを使用しています。最終的に、このJava コードのモダナイゼーションを実現し、Red Hat JBoss Web Server の上にある OpenShift にこのアプリケーションをデプロイします。
+* 「Customers」サービスでは、 `Red Hat Virtualization` 上のVMで `Apache Tomcat` 上で動作する古いJavaコードベースを使用しています。最終的に、このJava コードのモダナイゼーションを実現し、OpenShift の上にある Red Hat JBoss Web Server にこのアプリケーションをデプロイします。
 * 「Customers」のデータベースは、Red Hat VirtualizationのVMとして動作する `Oracleデータベース` を使用していますが、この場合、データベースがOracleであるため、OpenShift上でこのデータベースをPodとしてデプロイすることはできません。したがって、 `OpenShift Migration Toolkit for Virtualization` で移行した `OpenShift Virtualization` に基づく新しい仮想マシンを使用する必要があります。
 
 このワークショップのすべてのモジュールを受講後、皆様のデプロイメントアーキテクチャは以下になります。
