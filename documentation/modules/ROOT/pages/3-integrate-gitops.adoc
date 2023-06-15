@@ -24,7 +24,7 @@ GitOpsにおける変更のトレーサビリティは、アプリケーショ�
 
 === 3.1.2 ゲートウェイ設定の更新
 
-`ゲートウェイ` 設定を更新する前に、現在の `gateway-config ConfigMap` の、 link:https://console-openshift-console.%SUBDOMAIN%/k8s/ns/retail-%USERID%/configmaps/gateway-config[application.yaml^] ファイル内の設定値を確認します。
+`ゲートウェイ` 設定を更新する前に、現在の `gateway-config` ConfigMapの、 link:https://console-openshift-console.%SUBDOMAIN%/k8s/ns/retail-%USERID%/configmaps/gateway-config[application.yaml^] ファイル内の設定値を確認します。
 
 image::gateway-config.png[gateway-config]
 
