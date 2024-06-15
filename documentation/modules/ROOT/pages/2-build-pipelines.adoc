@@ -6,8 +6,8 @@
 The goal of this exercise is to build and deploy the modernized customer application to OpenShift using link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.11/html-single/cicd/index#op-detailed-concepts[OpenShift Pipelines^]. You will accomplish this with the following steps:
 
 * Use the https://tekton.dev/[Tekton^] Pipeline to build and deploy the new, modernized application using Red Hat JBoss Web Server instead of Apache Tomcat as the runtime.
-* Set up the configuration for the *customers* service to connect to the legacy PostgreSQL database VM which is now running on OpenShift Container Platform
-* Test the *customers* service
+* Set up the configuration for the *customers* service to connect to the new PostgreSQL database running on OpenShift.
+* Test the *customers* service.
 
 == 2.1. Update PostgreSQL DBMS Connection using Helm
 
@@ -19,12 +19,7 @@ Helm can also be used to automate *day-1* tasks like installation and basic conf
 
 === 2.1.2. Update the Helm Chart for a new JDBC configuration
 
-The *customers* application in the OpenShift cluster currently has a connection failure because the application still tries to connect to the PostgreSQL database running on the legacy virtulization infrastructure. To fix the issue, you need to update the *JDBC* configuration that points to the migrated PostgreSQL database on OpenShift virtualization.
-
-[IMPORTANT]
-====
-To save your time to go through the hands-on labs today, our SRE team has already migrated the legacy VM running PostgreSQL database to the OpenShift virtualization in the *retail-%USERID%* project.
-====
+The *customers* application in the OpenShift cluster currently has a connection failure because the application still tries to connect to the PostgreSQL database running on the legacy virtulization infrastructure. To fix the issue, you need to update the *JDBC* configuration that points to the migrated PostgreSQL database on OpenShift.
 
 The JDBC configuration is currently managed by the _Helm chart_ to automate day 1 & 2 operations for the modernized Globex retail system. Let's go back to the link:https://codeserver-codeserver-%USERID%.%SUBDOMAIN%[VS Code server^] and explore the *helm/customer-tomcat-gitops* directory.
 
