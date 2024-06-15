@@ -56,7 +56,7 @@ All source code for the applications as well as the GitOps YAML manifests for al
 The problem right now is in the *customers* service:
 
 * The customers service uses an old Java code base running on Apache Tomcat in a VM on Legacy Virtualization. In this module you will assess and analyze this legacy Java application to learn the best way to modernize the Java code and then deploy the application to OpenShift on top of Red Hat JBoss Web Server.
-* The customers database is using an PostgreSQL database running as a VM in Legacy Virtualization. The IT Ops team at Globex want to keep running the PostgreSQL database on virtualization environment rather than containerization. Therefore, you will lift and shift the VM to OpenShift Virtualization using the Migration Toolkit for Virtualization.
+* The customers database is using an PostgreSQL database running as a VM in Legacy Virtualization. The IT Ops team at Globex want to modernize the customers database by migrating it to OpenShift containerization.
 
 Once you have finished the all of the modules in this workshop, your deployment architecture will look like this:
 
