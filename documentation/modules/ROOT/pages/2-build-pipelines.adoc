@@ -175,7 +175,8 @@ oc label deployment/orders app.kubernetes.io/part-of=orders app.openshift.io/run
 oc label deployment/postgresql-orders app.kubernetes.io/part-of=orders app.openshift.io/runtime=postgresql --overwrite && \
 oc annotate deployment/orders app.openshift.io/connects-to='[{"apiVersion":"apps/v1","kind":"Deployment","name":"postgresql-orders"}]' --overwrite && \
 oc label deployment/customers app.kubernetes.io/part-of=customers app.openshift.io/runtime=tomcat --overwrite && \
-oc annotate deployment/customers app.openshift.io/connects-to='[{"apiVersion":"apps/v1","kind":"VirtualMachine","name":"postgresql-database"}]' --overwrite && \
+oc annotate deployment/customers app.openshift.io/connects-to='[{"apiVersion":"apps/v1","kind":"Deployment","name":"postgresql-customer"}]' --overwrite && \
+oc label deployment/postgresql-customer app.kubernetes.io/part-of=customers app.openshift.io/runtime=postgresql --overwrite && \
 oc label deployment/ordersfrontend app.kubernetes.io/part-of=ordersfrontend app.openshift.io/runtime=nodejs --overwrite && \
 oc annotate deployment/ordersfrontend app.openshift.io/connects-to=gateway --overwrite && \
 oc label deployment/gateway app.kubernetes.io/part-of=gateway app.openshift.io/runtime=spring --overwrite && \
