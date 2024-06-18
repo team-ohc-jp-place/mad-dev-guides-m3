@@ -64,8 +64,9 @@ image::argocd-application-details.png[argocd-application-details]
 
 Replace keys and values of `customerDatabase` with the following data that refer to the PostgreSQL virtual machine on Red Hat OpenShift. It should look like this:
 
-* customerDatabase.hostname: `postgresql-database`
-* customerDatabase.password: `redhat`
+* customerDatabase.hostname: `postgresql-customer`
+* customerDatabase.password: `customer`
+* customerDatabase.user: `customer`
 
 image::argocd-application-update.png[argocd-application-update]
 
