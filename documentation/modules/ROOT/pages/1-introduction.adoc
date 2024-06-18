@@ -86,10 +86,8 @@ You have to use *an unique username* (e.g. `%USERID%`) while you're running the 
 Your OpenShift cluster is already configured with everything you need. Here are the details:
 
 * `Gitea` to host the source code repositories
-* `OpenShift Virtualization` to ultimately run the migrated PostgreSQL VM
 * `OpenShift GitOps` to manage the deployed services using a GitOps approach through ArgoCD
 * `OpenShift Pipelines` to build the customer application from source code and deploy to the `retail` project using GitOps
-* `Migration Toolkit for Applications` to help modernize the customer service.
 
 === 1.2.3. Visual Studio Code Server
 
