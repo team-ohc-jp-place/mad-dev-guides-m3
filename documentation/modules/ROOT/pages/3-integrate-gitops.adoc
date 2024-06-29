@@ -10,6 +10,10 @@ The goal is to build and deploy the modernized customer application to OpenShift
 
 == 3.1. Sync the Gateway application in ArgoCD
 
+link:https://argoproj.github.io/cd[Argo CD^] is a declarative continuous delivery tool for Kubernetes. It can be used as a standalone tool or as a part of your CI/CD workflow to deliver needed resources to your clusters.
+
+In order to manage infrastructure and application configurations aligned with link:https://www.redhat.com/en/topics/devops/what-is-gitops[GitOps^], your Git repository must be the single source of truth. The desired state of your system should be versioned, expressed declaratively, and pulled automatically. This is where Argo CD comes in. 
+
 === 3.1.1 Why OpenShift GitOps?
 
 `GitOps` in short is a set of practices to use *Git pull requests* to manage infrastructure and application configurations. A Git repository in GitOps is considered the only source of truth and contains the entire state of the system so that the trail of changes to the system state are visible and auditable.
