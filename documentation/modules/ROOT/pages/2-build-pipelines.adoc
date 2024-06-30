@@ -50,7 +50,7 @@ image::sso_login.png[openshift_login]
 image::argo_authorize.png[openshift_login]
 
 
-You will see that the `customers-tomcat-gitops` status is *Degraded* because the application still refers to the old database hostname (e.g.*postgresql-db-database*).
+You will see that the `customers-tomcat-gitops` status is *Progressing* because the application still refers to the old database hostname (e.g.*postgresql-db-database*).
 
 image::argocd-application-degrade.png[argocd-application-degrade]
 
