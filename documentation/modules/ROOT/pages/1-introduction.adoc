@@ -124,7 +124,7 @@ If you see a popup message about allowing copy/paste, *"See text and images copi
 
 == 1.4 Change the Working Project
 
-Make sure to *check out* to the right branch, `patch-postgre` that you'll go through this module today! Run the following `git` command in the VS Code terminal.
+Make sure to *check out* to the right branch, `ocp-4.15` that you'll go through this module today! Run the following `git` command in the VS Code terminal.
 
 [.console-input]
 [source,bash]
